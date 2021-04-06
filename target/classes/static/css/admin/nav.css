@@ -1,0 +1,20 @@
+/*
+* @Author: Marte
+* @Date:   2019-06-12 21:50:35
+* @Last Modified by:   Marte
+* @Last Modified time: 2019-06-12 22:01:40
+*/
+.logoBox{
+    display: block;
+    text-align:center;
+    vertical-align: middle;
+}
+
+.logoBox:hover{
+    cursor:pointer;
+}
+
+.SystemNameStyle{
+    display: block;
+    margin-bottom: 10px;
+}

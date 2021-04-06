@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{public :: AdminHead}">
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div th:replace="~{public :: layuiInit}"></div>
+        <div th:replace="~{public :: AdminNavs}"></div>
+        <div th:replace="~{public :: AdminMain('/welcome/welcome')}"></div>
+    </div>
+</body>
+</html>

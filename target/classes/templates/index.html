@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>体育馆预约管理登录</title>
+    <link rel="stylesheet"  th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/layui/jquery.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<from class="layui-form layui-row layui-col-space5" lay-filter="example" id="AdminLoginBox">
+    <div class="layui-field-box">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号：</label>
+                <div class="layui-input-block">
+                    <input type="text" value="14796155159" name="adminuser" id="adminuser" required  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码：</label>
+                <div class="layui-input-block">
+                    <input type="password" name="adminpass" value="admin" id="adminpass" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>`
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-block">
+                    <div style="width: 100%; margin: 0;">
+                        <button type="button" id="insertBtn" class="layui-btn layui-btn-fluid">登录</button>
+                    </div>
+                    <br>
+
+                    <div style="float: right;">
+                        <button type="reset"  class="layui-btn layui-btn-xs layui-btn-primary">
+                            注册
+                        </button>
+                        <button type="reset"  class="layui-btn layui-btn-xs layui-btn-primary">
+                            忘记密码
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</from>
+</body>
+</html>
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        layui.use(['form','element','layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var element = layui.element;
+            form.render();
+            element.init();
+
+            $("body").css({
+                "background":"url("+[[@{"/images/admin/adminlogin2.jpg"}]]+") no-repeat",//
+                "backgroundSize":window.innerWidth+"px "+window.innerHeight+"px"
+            });
+
+            layer.open({
+                type: 1,
+                area:["500px","320px"],
+                title:"体育馆预约管理登录",
+                skin:"layui-layer-molv",
+                closeBtn:0,
+                content: $('#AdminLoginBox')
+            });
+
+            $("#insertBtn").click(function(){
+                $.ajax({
+                    url: "/login/doLogin",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        identify:$("input[name='identify']:checked").val(),
+                        phone:$("#adminuser").val(),
+                        password:$("#adminpass").val()
+                    },
+                })
+                .done(function(data) {
+                    //console.log("success");
+                    console.log(data);
+                    if(data.code==20000){
+                        layer.msg("登录成功",{time:1500,anim:0},function(){
+                            window.location.href="/base/base";
+                        });
+                    }else{
+                        layer.msg("登录失败，请检查账号密码",{time:1500,anim:0});
+                    }
+                })
+                .fail(function() {
+                    console.log("error");
+                    layer.msg("登录失败，请检查账号密码");
+                });
+            });
+        });
+    });
+
+</script>
