@@ -1,6 +1,7 @@
 package com.fzh.com.utils;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +37,16 @@ public class DateUtil {
         return (int)(longTimeStamp/1000);
     }
 
+    /**
+    * 说明: 获取当前时间的指定格式
+    * @author   zhangxiaosan
+    * @create   2021/4/11
+    * @param type String 格式
+    * @return
+    */
+    public static String getTimeType(String type){
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(type));
+    }
 
     /**
      * 字符串时间格式转换成时间格式
@@ -67,6 +78,24 @@ public class DateUtil {
         //System.out.println(date);   //Mon Sep 02 00:00:00 CST 2019
         //System.out.println(simpleDateFormat.format(date));  //2019-09-02
         return date;
+    }
+
+    /***
+     * 字符串时间转成10位时间戳
+     */
+    public static Integer dateToTimeStamp(String  date){
+        return Integer.valueOf(
+                String.valueOf(
+                        (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+                .parse(date,new ParsePosition(0)).getTime()/1000)
+        );
+    }
+    /***
+     * 字符串时间转成13位时间戳
+     */
+    public static Long dateToTimeStampLong(String  date){
+        return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
+                .parse(date,new ParsePosition(0)).getTime()/1000;
     }
 
     /**

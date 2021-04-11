@@ -1,5 +1,6 @@
 package com.fzh.com.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -82,5 +83,15 @@ public class JwtUtil {
         return (DecodedJWT) data;
     }
 
+    public static void main(String[] args) {
+        HashMap<String, String> stringStringHashMap = new HashMap<>();
+        stringStringHashMap.put("username", "zhangsan");
+        String token = createToken(stringStringHashMap);
+        System.out.println(token);
 
+        Map map = verifyToken(token);
+        System.out.println(map);
+
+        System.out.println(getDateByToken(token));
+    }
 }

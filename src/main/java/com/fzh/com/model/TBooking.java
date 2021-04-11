@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
 
@@ -47,9 +48,17 @@ public class TBooking {
   private long deleteTime;
 
   @Column(name = "booking_status")
-  private long bookingStatus;
+  private Integer bookingStatus;
 
   @Column(name = "remark")
   private String remark;
 
+  @Column(name = "booking_phone")
+  private String bookingPhone;
+
+  @Column(name = "width_num")
+  private Integer widthNum;
+
+  @Column(name = "booking_student_num")
+  private Integer bookingStudentNum;
 }

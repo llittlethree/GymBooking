@@ -86,7 +86,7 @@ public class TVenueController {
     * @return
     */
     @PostMapping(value ="/getByid")
-    public String getByid(@RequestParam(value = "id")Integer id){
+    public String getByid(@RequestParam(value = "id") Integer id){
         System.out.println("getByid Start!");
         System.out.println("param id:"+id);
         String resStr ="";

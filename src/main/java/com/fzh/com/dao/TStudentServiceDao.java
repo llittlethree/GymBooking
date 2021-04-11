@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TStudentServiceDao extends JpaRepository<TStudent,Long>, JpaSpecificationExecutor<TStudent> {
+    TStudent findByStudentNumberAndStudentPassword(String username, String password);
+
+    TStudent findByStudentPhoneAndStudentPassword(String username, String password);
 }
