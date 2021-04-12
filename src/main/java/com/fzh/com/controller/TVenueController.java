@@ -1,9 +1,13 @@
 package com.fzh.com.controller;
 
 import com.fzh.com.model.TVenue;
+import com.fzh.com.model.TVenueCategory;
 import com.fzh.com.sevice.TVenueService;
+import com.fzh.com.utils.DateUtil;
 import com.fzh.com.utils.PageUtil;
 import com.fzh.com.utils.ResponseUtil;
+import com.fzh.com.utils.StringUtil;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -99,6 +103,91 @@ public class TVenueController {
             resStr = ResponseUtil.error("getByid Error:"+e);
         }
         System.out.println("getByid End!");
+        return resStr;
+    }
+
+    /**
+     * 添加场地
+     */
+    @PostMapping(name = "/add")
+    public String add(
+            @RequestParam(value = "venueCategoryId",defaultValue = "1") String venueCategoryId,
+            @RequestParam(value = "venueName" ) String venueName,
+            @RequestParam(value = "price",defaultValue = "0.0") String price,
+            @RequestParam(value = "remark" ,required = false) String remark,
+            @RequestParam(value = "maxUse",defaultValue = "1" ) String maxUse
+    ){
+        System.out.println("add Start");
+        String resStr = "";
+        if(StringUtil.isEmpty(venueCategoryId)) return ResponseUtil.error("类型id不能为空");
+        if(StringUtil.isEmpty(venueName)) return ResponseUtil.error("场地名称不能为空");
+        if(StringUtil.isEmpty(price)) return ResponseUtil.error("价格不能为空");
+        if(StringUtil.isEmpty(maxUse)) return ResponseUtil.error("最大使用量不能为空");
+        if(Integer.valueOf(maxUse) <= 0) return ResponseUtil.error("最大使用量必须大于等于1");
+        if(BigDecimal.valueOf(Double.valueOf(price)).compareTo(BigDecimal.ZERO) == -1) return ResponseUtil.error("价格不能小于0");
+        System.out.println("add End");
+        try{
+           TVenue tVenue =  tVenueService.save(
+                    new TVenue()
+                    .setVenueCategoryId(Long.valueOf(venueCategoryId))
+                    .setVenueName(venueName)
+                    .setPrice(BigDecimal.valueOf(Double.valueOf(price)))
+                    .setCreateTime(DateUtil.getTimeStampNow())
+                    .setRemark(remark)
+                    .setMaxUse(Integer.valueOf(maxUse))
+           );
+           resStr = ResponseUtil.success(tVenue);
+        }catch (Exception e){
+            resStr = ResponseUtil.error("add Error:"+e);
+            e.printStackTrace();
+        }
+        return resStr ;
+    }
+
+
+    /**
+     * 修改场地
+     * */
+    @PostMapping(value = "/update")
+    public String update(
+            @RequestParam(value = "id") String id,
+            @RequestParam(value = "venueCategoryId",defaultValue = "1") String venueCategoryId,
+            @RequestParam(value = "venueName" ) String venueName,
+            @RequestParam(value = "price",defaultValue = "0.0") String price,
+            @RequestParam(value = "remark" ,required = false) String remark,
+            @RequestParam(value = "maxUse",defaultValue = "1" ) String maxUse
+    ){
+        System.out.println("update Start!");
+        String resStr = "";
+        if (StringUtil.isEmpty(id)) return ResponseUtil.error("id不能为空");
+        if (StringUtil.isEmpty(venueCategoryId)) return  ResponseUtil.error("场地类型id不能为空");
+        if (StringUtil.isEmpty(venueName)) return ResponseUtil.error("场地名称不能为空");
+        if (StringUtil.isEmpty(price)) return ResponseUtil.error("价格不能为空");
+        if (StringUtil.isEmpty(maxUse)) return ResponseUtil.error("最大使用量不能为空");
+
+        //根据id查找场地
+        try {
+            TVenue byId = tVenueService.findById(Long.valueOf(id));
+            if (byId == null) return ResponseUtil.error("查找不到对应的数据");
+
+            TVenue tVenue =  tVenueService.save(
+                    new TVenue()
+                            .setId(Long.valueOf(id))
+                            .setVenueCategoryId(Long.valueOf(venueCategoryId))
+                            .setVenueName(venueName)
+                            .setPrice(BigDecimal.valueOf(Double.valueOf(price)))
+                            .setCreateTime(DateUtil.getTimeStampNow())
+                            .setRemark(remark)
+                            .setMaxUse(Integer.valueOf(maxUse))
+            );
+            resStr = ResponseUtil.success(tVenue);
+
+        } catch (Exception e) {
+            resStr = ResponseUtil.error("update Error:" + e);
+            e.printStackTrace();
+        }
+
+        System.out.println("update End!");
         return resStr;
     }
 }

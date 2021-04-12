@@ -26,11 +26,17 @@ public class TBooking {
   @Column(name = "number")
   private String number;
 
-  @Column(name = "booking_userid")
-  private long bookingUserid;
+  //一个订单对应一个用户
+  //@Column(name = "booking_userid")
+  @OneToOne
+  @JoinColumn(name = "booking_userid",referencedColumnName = "id")
+  private TStudent tStudent;
 
-  @Column(name = "venue_id")
-  private long venueId;
+  //一个订单对应一个场地
+  //@Column(name = "venue_id")
+  @OneToOne
+  @JoinColumn(name = "venue_id",referencedColumnName = "id")
+  private TVenue tVenue;
 
   @Column(name = "booking_start_time")
   private long bookingStartTime;

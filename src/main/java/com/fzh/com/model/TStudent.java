@@ -39,8 +39,11 @@ public class TStudent {
   @Column(name = "student_sex")
   private long studentSex;
 
-  @Column(name = "class_id")
-  private long classId;
+  //@Column(name = "class_id")
+  //一对一 一个学生对应一个班级
+  @OneToOne
+  @JoinColumn(name = "class_id",referencedColumnName = "id")
+  private TClass tClass;
 
   @Column(name = "create_time")
   private long createTime;

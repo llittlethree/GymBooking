@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +24,14 @@ public class TVenue {
   @Column(name = "id")
   private long id;
 
+  //一对一 一个场地对应一个场地类型
   @Column(name = "venue_category_id")
-  private long venueCategoryId;
+  private Long venueCategoryId;
+
+  @OneToOne
+  @JoinColumn(name = "venue_category_id",referencedColumnName = "id")
+  private TVenueCategory tVenueCategory;
+
 
   @Column(name = "venue_name")
   private String venueName;
@@ -46,6 +54,10 @@ public class TVenue {
   @Column(name = "max_use")
   private long maxUse;
 
+  //一对多，一个场地对应多个资源
+  @OneToMany(targetEntity = TResource.class)
+  @JoinColumn(name = "venue_resource_id",referencedColumnName = "id")
+  private Set<TResource> tResourceSet = new HashSet<TResource>();
 
 
 }

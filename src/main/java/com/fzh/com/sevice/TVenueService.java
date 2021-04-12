@@ -34,4 +34,19 @@ public interface TVenueService {
      * @return
      */
     TVenue findById(Integer id) throws Exception;
+
+    /**
+     * 说明: 根据id查找详情
+     * @author   zhangxiaosan
+     * @create   2021/4/1
+     * @param  id Integer 场地id
+     * @return
+     */
+    TVenue findById(Long id) throws Exception;
+    /**
+     * 添加场地
+     * @param tVenue TVenue 场地实体
+     * @return 返回添加成功的场地实体对象
+     * */
+    TVenue save(TVenue tVenue) throws Exception;
 }

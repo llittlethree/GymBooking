@@ -33,6 +33,7 @@ public class TVenueServiceImpl implements TVenueService {
     @Autowired
     private TVenueServiceDao tVenueServiceDao;
 
+
     /**
      * 说明: 分页查找场地列表
      *
@@ -88,4 +89,17 @@ public class TVenueServiceImpl implements TVenueService {
         Long idL = Long.valueOf(id.toString());
         return tVenueServiceDao.findById(idL).get();
     }
+
+    /**
+     * 添加场地
+     *
+     * @param tVenue TVenue 场地实体
+     * @return 返回添加成功的场地实体对象
+     */
+    @Override
+    public TVenue save(TVenue tVenue) throws Exception {
+        return tVenueServiceDao.save(tVenue);
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.fzh.com.utils;
 
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 public class StringUtil {
@@ -26,6 +27,10 @@ public class StringUtil {
     public static void main(String[] args) {
         System.out.println(isInteger("1.0"));
         System.out.println(4%500);
+
+        System.out.println(BigDecimal.valueOf(Double.valueOf("0.0")).compareTo(BigDecimal.ZERO));
+        System.out.println(BigDecimal.valueOf(Double.valueOf("1")).compareTo(BigDecimal.ZERO));
+        System.out.println(BigDecimal.valueOf(Double.valueOf("-2")).compareTo(BigDecimal.ZERO));
     }
 
 }
