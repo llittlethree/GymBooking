@@ -53,8 +53,9 @@ public class TBookingServiceImpl implements TBookingService {
     @Override
     public Boolean canBookingByTime(String bookingStartTime, String bookingEndTime) throws Exception {
         List<TBooking> all = tBookingServiceDao.findByBookingStatus(1);
-        Integer start = DateUtil.dateToTimeStamp(bookingStartTime);
-        Integer end = DateUtil.dateToTimeStamp(bookingEndTime);
+        Integer start = 0, end = 0;
+        if (StringUtil.isNoEmpty(bookingStartTime)) start= DateUtil.dateToTimeStamp(bookingStartTime);
+        if (StringUtil.isNoEmpty(bookingEndTime)) end = DateUtil.dateToTimeStamp(bookingEndTime);
 
         boolean flag = true;
         if (all.size() > 0){
@@ -100,19 +101,20 @@ public class TBookingServiceImpl implements TBookingService {
      * @param bookingStartTime String 预约开始时间
      * @param bookingEndTime   String 预约结束时间
      * @param bookingStatus    String 预约状态 默认1 预约成功
+     * @param bookingPhone    String 预约手机号
      * @return
      * @author zhangxiaosan
      * @create 2021/4/11
      */
     @Override
-    public Page list(Pageable pageable, String number, String bookingUserid, String bookingStartTime, String bookingEndTime, String bookingStatus) throws Exception {
+    public Page list(Pageable pageable, String number, String bookingUserid, String bookingStartTime, String bookingEndTime, String bookingStatus,String bookingPhone) throws Exception {
         return tBookingServiceDao.findAll(new Specification<TBooking>() {
             @Override
             public Predicate toPredicate(Root<TBooking> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 List<Predicate> predicateList = new ArrayList<>();
 
                 if(StringUtil.isNoEmpty(number)){
-                    predicateList.add(cb.equal(root.get("number"), number));
+                    predicateList.add(cb.like(root.get("number"), "%"+number+"%"));
                 }
                 if(StringUtil.isNoEmpty(bookingUserid)){
                     predicateList.add(cb.equal(root.get("bookingUserid"), bookingUserid));
@@ -126,7 +128,10 @@ public class TBookingServiceImpl implements TBookingService {
                 if(StringUtil.isNoEmpty(bookingEndTime)){
                     predicateList.add(cb.lessThanOrEqualTo(root.get("bookingEndTime"), bookingEndTime));
                 }
-
+                if(StringUtil.isNoEmpty(bookingPhone)){
+                    predicateList.add(cb.like(root.get("bookingPhone"), "%"+bookingPhone+"%"));
+                }
+                predicateList.add(cb.lessThanOrEqualTo(root.get("deleteTime"),0 ));
                 Predicate[] pre = new Predicate[predicateList.size()];
                 criteriaQuery.where(predicateList.toArray(pre));
                 return cb.and(predicateList.toArray(pre));
@@ -145,5 +150,31 @@ public class TBookingServiceImpl implements TBookingService {
     @Override
     public List<TBooking> findByBookingStatus(Integer bookingStatus) throws Exception {
         return tBookingServiceDao.findByBookingStatus(bookingStatus);
+    }
+
+    /***
+     * 根据id获取预约记录
+     * @param id
+     */
+    @Override
+    public TBooking getById(String id) throws Exception {
+        return tBookingServiceDao.getOne(Long.valueOf(id));
+    }
+
+    /**
+     * 说明: 删除一条记录
+     *
+     * @param id
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/16
+     */
+    @Override
+    public int deleteOne(Integer id) throws Exception {
+        TBooking one = tBookingServiceDao.getOne(Long.valueOf(id));
+        one.setDeleteTime(Long.valueOf(DateUtil.getTimeStampNow()));
+        TBooking save = tBookingServiceDao.save(one);
+        if (save!=null)return 1;
+        return 0;
     }
 }

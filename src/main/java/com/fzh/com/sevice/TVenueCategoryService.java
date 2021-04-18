@@ -13,4 +13,5 @@ public interface TVenueCategoryService {
     * @return   场地列表 List<TVenueCategory>
     */
     List<TVenueCategory> findAll(String venueCategoryName) throws Exception;
+
 }

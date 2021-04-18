@@ -19,13 +19,13 @@ public class TResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "path")
     private String path;
 
     @Column(name = "ref_id")
-    private long  refId;
+    private Long  refId;
 
     @Column(name = "ref_table")
     private String  refTable;

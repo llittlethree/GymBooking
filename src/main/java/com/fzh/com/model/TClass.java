@@ -20,7 +20,7 @@ public class TClass {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "class_name")
   private String className;
@@ -32,16 +32,16 @@ public class TClass {
   private String professionalName;
 
   @Column(name = "create_time")
-  private long createTime;
+  private Long createTime;
 
   @Column(name = "update_time")
-  private long updateTime;
+  private Long updateTime;
 
   @Column(name = "delete_time")
-  private long deleteTime;
+  private Long deleteTime;
 
   @Column(name = "class_status")
-  private long classStatus;
+  private Long classStatus;
 
   @Column(name = "remark")
   private String remark;

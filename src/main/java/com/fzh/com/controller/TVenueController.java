@@ -108,7 +108,7 @@ public class TVenueController {
     /**
      * 添加场地
      */
-    @PostMapping(name = "/add")
+    @PostMapping(value = "/add")
     public String add(
             @RequestParam(value = "venueCategoryId",defaultValue = "1") String venueCategoryId,
             @RequestParam(value = "venueName" ) String venueName,
@@ -117,6 +117,11 @@ public class TVenueController {
             @RequestParam(value = "maxUse",defaultValue = "1" ) String maxUse
     ){
         System.out.println("add Start");
+        System.out.println("param venueCategoryId:"+venueCategoryId);
+        System.out.println("param venueName:"+venueName);
+        System.out.println("param price:"+price);
+        System.out.println("param remark:"+remark);
+        System.out.println("param maxUse:"+maxUse);
         String resStr = "";
         if(StringUtil.isEmpty(venueCategoryId)) return ResponseUtil.error("类型id不能为空");
         if(StringUtil.isEmpty(venueName)) return ResponseUtil.error("场地名称不能为空");
@@ -131,8 +136,10 @@ public class TVenueController {
                     .setVenueCategoryId(Long.valueOf(venueCategoryId))
                     .setVenueName(venueName)
                     .setPrice(BigDecimal.valueOf(Double.valueOf(price)))
-                    .setCreateTime(DateUtil.getTimeStampNow())
+                    .setCreateTime(Long.valueOf(DateUtil.getTimeStampNow()))
                     .setRemark(remark)
+                    .setUpdateTime(0L)
+                    .setDeleteTime(0L)
                     .setMaxUse(Integer.valueOf(maxUse))
            );
            resStr = ResponseUtil.success(tVenue);
@@ -175,7 +182,7 @@ public class TVenueController {
                             .setVenueCategoryId(Long.valueOf(venueCategoryId))
                             .setVenueName(venueName)
                             .setPrice(BigDecimal.valueOf(Double.valueOf(price)))
-                            .setCreateTime(DateUtil.getTimeStampNow())
+                            .setCreateTime(Long.valueOf(DateUtil.getTimeStampNow()))
                             .setRemark(remark)
                             .setMaxUse(Integer.valueOf(maxUse))
             );

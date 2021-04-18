@@ -50,9 +50,10 @@ public interface TBookingService {
      * @param bookingStartTime String 预约开始时间
      * @param bookingEndTime String 预约结束时间
      * @param bookingStatus String 预约状态 默认1 预约成功
+     * @param bookingPhone String 预约手机号
      * @return
      */
-    Page list(Pageable pageable, String number, String bookingUserid, String bookingStartTime, String bookingEndTime, String bookingStatus)throws Exception;
+    Page list(Pageable pageable, String number, String bookingUserid, String bookingStartTime, String bookingEndTime, String bookingStatus,String bookingPhone)throws Exception;
 
     /**
      * 说明:五分钟执行一次，更新预约状态，判断是否逾期
@@ -62,4 +63,19 @@ public interface TBookingService {
      * @return
      */
     List<TBooking> findByBookingStatus(Integer bookingStatus)throws Exception;
+
+    /***
+     * 根据id获取预约记录
+     * @param id
+     */
+    TBooking getById(String id)throws Exception;
+
+    /**
+    * 说明: 删除一条记录
+    * @author   zhangxiaosan
+    * @create   2021/4/16
+    * @param
+    * @return
+    */
+    int deleteOne(Integer id)throws Exception;
 }

@@ -20,7 +20,7 @@ public class TAdmin {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long  id;
 
   @Column(name = "admin_phone")
   private String adminPhone;
@@ -32,19 +32,19 @@ public class TAdmin {
   private String adminPassword;
 
   @Column(name = "admin_sex")
-  private long adminSex;
+  private Integer adminSex;
 
   @Column(name = "create_time")
-  private long createTime;
+  private Long createTime;
 
   @Column(name = "update_time")
-  private long updateTime;
+  private Long updateTime;
 
   @Column(name = "delete_time")
-  private long deleteTime;
+  private Long deleteTime;
 
   @Column(name = "admin_status")
-  private long adminStatus;
+  private Integer adminStatus;
 
   @Column(name = "remark")
   private String remark;

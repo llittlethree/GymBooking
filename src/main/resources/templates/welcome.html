@@ -1,18 +1,94 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{public :: AdminHead}">
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html>
+<head>
+    <meta charset="utf-8"  xmlns:th="http://www.thymeleaf.org">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>体育馆预约管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/jquery.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-123
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">体育馆预约管理系统</div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    退出登录
+                </a>
+                <!--<a href="javascript:;">
+                    <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
+                    tester
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">退出</a></dd>
+                    <dd><a href="">set 2</a></dd>
+                </dl>-->
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">预约中心</a>
+                    <dl class="layui-nav-child"><!--0取消预约 1预约成功，2预约失败 3预约已核销 4预约逾期-->
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/booking/showBooking?bookingStatus=1')">待核销</a></dd>
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/booking/showBooking?bookingStatus=3')">已核销</a></dd>
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/booking/showBooking?bookingStatus=0')">已取消</a></dd>
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/booking/showBooking?bookingStatus=4')">已逾期</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">场地管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/venue/showList')">场地列表</a></dd>
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/venue/venueCategoryList')">场地类别</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <iframe id="bodyContent" src="" width="100%" height="820" style="border: none;"></iframe>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        底部固定区域
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    $(function () {
+        var element;
+        layui.use('element', function(){
+            element = layui.element;
+
+
+
+        });
+
+
+    })
+    //跳转的方法
+    function To(url) {
+        console.log(url)
+        $("iframe#bodyContent").attr('src',url);
+    }
+</script>
 </body>
 </html>
-<script  th:inline="javascript">
-    //JavaScript代码区域
-    var element;
-    layui.use('element', function(){
-        element = layui.element;
-
-    });
-</script>

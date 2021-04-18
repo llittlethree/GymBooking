@@ -1,5 +1,6 @@
 package com.fzh.com.sevice;
 
+import com.fzh.com.model.TAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,4 +24,13 @@ public interface TAdminService {
      * @return
      */
     Page list(Pageable pageable, String adminPhone, String adminName, String adminSex, String createStartTime, String createEndTime, String adminStatus) throws Exception;
+
+    /**
+    * 说明: 登录
+    * @author   zhangxiaosan
+    * @create   2021/4/15
+    * @param
+    * @return
+    */
+    TAdmin findByAdminPhoneAndAdminPasswordAndAdminStatus(String phone, String password, Integer status)throws Exception;
 }

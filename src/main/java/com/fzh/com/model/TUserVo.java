@@ -23,7 +23,7 @@ import javax.persistence.Id;
 @Accessors(chain = true)
 public class TUserVo {
 
-    private long id;
+    private Long id;
 
 
     private String openid;
@@ -40,18 +40,18 @@ public class TUserVo {
     private String name;
 
 
-    private long sex;
+    private Long sex;
 
-    private long classId;
+    private Long classId;
 
 
-    private long createTime;
+    private Long createTime;
 
-    private long updateTime;
+    private Long updateTime;
 
-    private long deleteTime;
+    private Long deleteTime;
 
-    private long status;
+    private Long status;
     private String studentNumber;
 
     private String remark;

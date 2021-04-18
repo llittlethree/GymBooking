@@ -49,4 +49,27 @@ public interface TVenueService {
      * @return 返回添加成功的场地实体对象
      * */
     TVenue save(TVenue tVenue) throws Exception;
+
+    /***
+     * 查找 场地列表分页
+     * @param pageable 分页
+     * @param venueCategoryId 类型id
+     * @param venueName 场地名称
+     * @param start 创建开始时间
+     * @param end 创建结束时间
+     * @param price 价格
+     * @param maxUse 最大使用量
+     * @return
+     * @throws Exception
+     */
+    Page list(Pageable pageable, String venueCategoryId, String venueName, String start, String end, String price, String maxUse)throws Exception;
+
+    /**
+     * 说明: 删除一条记录
+     * @author   zhangxiaosan
+     * @create   2021/4/16
+     * @param
+     * @return
+     */
+    int deleteOne(Integer id)throws Exception;
 }

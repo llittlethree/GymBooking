@@ -20,15 +20,14 @@ import java.math.BigDecimal;
 @ToString
 @Accessors(chain = true)
 public class TVenueVo {
-    private long id;
+    private Long id;
     private TVenueCategory tVenueCategory;
     private String venueName;
     private BigDecimal price;
-    private long createTime;
-    private long updateTime;
-    private long deleteTime;
+    private Long createTime;
+    private Long updateTime;
+    private Long deleteTime;
     private String remark;
-    private long maxUse;
-
+    private Long maxUse;
 
 }

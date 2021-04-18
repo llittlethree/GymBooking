@@ -95,7 +95,7 @@ public class DateUtil {
      */
     public static Long dateToTimeStampLong(String  date){
         return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))
-                .parse(date,new ParsePosition(0)).getTime()/1000;
+                .parse(date,new ParsePosition(0)).getTime();
     }
 
     /**

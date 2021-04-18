@@ -1,8 +1,12 @@
 package com.fzh.com.controller;
 
+import com.fzh.com.model.TAdmin;
+import com.fzh.com.sevice.TAdminService;
 import com.fzh.com.utils.ResponseUtil;
+import com.fzh.com.utils.StringUtil;
 import com.fzh.com.utils.privacy.Aes;
 import com.fzh.com.utils.privacy.Md5;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,7 +26,8 @@ import java.util.List;
 @RequestMapping(value = "/login")
 public class Login extends BaseController{
 
-
+    @Autowired
+    private TAdminService tAdminService;
 
 
     /**
@@ -46,8 +51,21 @@ public class Login extends BaseController{
             HttpSession session
 
     ){
-
-        return null;
+        System.out.println("param phone:"+phone);
+        System.out.println("param password:"+password);
+        if(StringUtil.isEmpty(phone)) return ResponseUtil.error("请输入手机号");
+        if(StringUtil.isEmpty(password)) return ResponseUtil.error("请输入密码");
+        String resStr = ResponseUtil.error("登录失败，请检查账号密码是否正确");
+        try {
+            TAdmin tAdmin = tAdminService.findByAdminPhoneAndAdminPasswordAndAdminStatus(phone, password, 0);
+            if(tAdmin == null)  return ResponseUtil.error("登录失败，请检查账号密码是否正确");
+            resStr = ResponseUtil.success("登录成功");
+            session.setAttribute("adminLoginInfo",tAdmin);
+        }catch (Exception e){
+            resStr = ResponseUtil.error("login Error:"+e);
+            e.printStackTrace();
+        }
+        return  resStr ;
     }
 
 

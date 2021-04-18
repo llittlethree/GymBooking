@@ -9,15 +9,14 @@ import com.fzh.com.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLOutput;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * @author 张小三
@@ -49,7 +48,7 @@ public class TBookingController {
             @RequestParam(value = "bookingEndTime") String bookingEndTime,
             @RequestParam(value = "remark") String remark,
             @RequestParam(value = "bookingPhone") String bookingPhone,
-            @RequestParam(value = "widthNum") String widthNum,
+            @RequestParam(value = "widthNum",defaultValue = "1") String widthNum,
             @RequestParam(value = "bookingStudentNum") String bookingStudentNum
     ){
         System.out.println("bookingStart Start");
@@ -74,15 +73,17 @@ public class TBookingController {
             if (tBookingService.canBookingByTime(bookingStartTime,bookingEndTime) == false) return ResponseUtil.error("该时间段已经被预约");
 
             TBooking tBooking = tBookingService.save(new TBooking()
-                .setNumber(DateUtil.getTimeType("yyyyMMddHHmmssSSS"))
-                .setVenueId(Integer.valueOf(venueId))
-                .setBookingEndTime(DateUtil.dateToTimeStamp(bookingEndTime))
-                .setBookingStartTime(DateUtil.dateToTimeStamp(bookingStartTime))
-                .setBookingStatus(1)
-                .setCreateTime(DateUtil.getTimeStampNow())
-                .setRemark(remark)
-                .setBookingPhone(bookingPhone)
-                .setBookingUserid(Integer.valueOf(bookingUserid))
+                    .setNumber(DateUtil.getTimeType("yyyyMMddHHmmssSSS"))
+                    .setBookingUserid(Long.valueOf(bookingUserid))
+                    .setVenueId(Long.valueOf(venueId))
+                    .setBookingStartTime(Long.valueOf(DateUtil.dateToTimeStamp(bookingStartTime)))
+                    .setBookingEndTime(Long.valueOf(DateUtil.dateToTimeStamp(bookingEndTime)))
+                    .setCreateTime(Long.valueOf(DateUtil.getTimeStampNow()))
+                    .setBookingStatus(1)
+                    .setRemark(remark)
+                    .setBookingPhone(bookingPhone)
+                    .setWidthNum(Integer.valueOf(widthNum))
+                    .setBookingStudentNum(bookingStudentNum)
             );
             resStr = ResponseUtil.success(tBooking);
         }catch (Exception e){
@@ -94,20 +95,22 @@ public class TBookingController {
     }
 
     /**
-    * 说明: 分页查找预约记录
-    * @author   zhangxiaosan
-    * @create   2021/4/11
-    * @param page Integer 当前页码
-    * @param pageSize Integer 每页显示的数量
-    * @param order String 排序规则
-    * @param orderBy String 排序条件
-    * @param number String 预约号
-    * @param bookingUserid String 预约者id
-    * @param bookingStartTime String 预约开始时间
-    * @param bookingEndTime String 预约结束时间
-    * @param bookingStatus String 预约状态 默认1 预约成功
-    * @return
-    */
+     * 说明: 分页查找预约记录
+     * @author   zhangxiaosan
+     * @create   2021/4/11
+     * @param page Integer 当前页码
+     * @param pageSize Integer 每页显示的数量
+     * @param order String 排序规则
+     * @param orderBy String 排序条件
+     * @param number String 预约号
+     * @param bookingUserid String 预约者id
+     * @param bookingStartTime String 预约开始时间
+     * @param bookingEndTime String 预约结束时间
+     * @param bookingStatus String 预约状态 默认1 预约成功
+     * @param bookingPhone String 预约手机号
+     * @param number String 预约号
+     * @return
+     */
     @PostMapping(value = "/list")
     public String list(
             @RequestParam(value = "page",defaultValue = "1") Integer page,
@@ -118,7 +121,8 @@ public class TBookingController {
             @RequestParam(value = "bookingUserid",defaultValue = "") String bookingUserid,
             @RequestParam(value = "bookingStartTime",defaultValue = "") String bookingStartTime,
             @RequestParam(value = "bookingEndTime",defaultValue = "") String bookingEndTime,
-            @RequestParam(value = "bookingStatus",defaultValue = "1") String bookingStatus
+            @RequestParam(value = "bookingStatus",defaultValue = "1") String bookingStatus,
+            @RequestParam(value = "bookingPhone",defaultValue = "") String bookingPhone
     ){
         System.out.println("venueApi list start!");
         System.out.println("param page:"+page);
@@ -134,8 +138,11 @@ public class TBookingController {
 
         String resStr="";
         try {
+            String start = null,end = null;
+            if(StringUtil.isNoEmpty(bookingStartTime)) start = DateUtil.dateToTimeStamp(bookingStartTime).toString();
+            if(StringUtil.isNoEmpty(bookingEndTime)) end = DateUtil.dateToTimeStamp(bookingEndTime).toString();
             Pageable pageable = PageUtil.page(page, pageSize, order, orderBy);
-            Page list = tBookingService.list(pageable, number, bookingUserid, bookingStartTime, bookingEndTime,bookingStatus);
+            Page list = tBookingService.list(pageable, number, bookingUserid, start,end,bookingStatus,bookingPhone);
             System.out.println(list);
             Map map = PageUtil.pageFormart(list);
             resStr = ResponseUtil.success(map);
@@ -143,7 +150,7 @@ public class TBookingController {
             resStr = ResponseUtil.error("查询异常，"+e);
             e.printStackTrace();
         }
-        System.out.println("venueApi list End!");
+        System.out.println("tBooking list End!");
         return  resStr;
     }
 
@@ -159,7 +166,7 @@ public class TBookingController {
         @RequestParam(value = "bookingStartTime",defaultValue = "") String bookingStartTime,
         @RequestParam(value = "bookingEndTime",defaultValue = "") String bookingEndTime
     ){
-        System.out.println("venueApi thisTimeBooked Start!");
+        System.out.println("tBooking thisTimeBooked Start!");
         System.out.println("param bookingStartTime:"+bookingStartTime);
         System.out.println("param bookingEndTime:"+bookingEndTime);
         if (StringUtil.isEmpty(bookingStartTime)) return ResponseUtil.error("开始时间不能为空");
@@ -172,10 +179,10 @@ public class TBookingController {
             resStr = ResponseUtil.success("该时间段可预约");
 
         }catch (Exception e){
-            resStr = ResponseUtil.error("venueApi thisTimeBooked Error:"+e);
+            resStr = ResponseUtil.error("tBooking thisTimeBooked Error:"+e);
             e.printStackTrace();
         }
-        System.out.println("venueApi thisTimeBooked end!");
+        System.out.println("tBooking thisTimeBooked end!");
         return  resStr;
     }
 
@@ -188,7 +195,7 @@ public class TBookingController {
     */
     @PostMapping(value = "ishaveByUserId")
     public String ishaveByUserId(@RequestParam(value = "bookingUserid",defaultValue = "") String bookingUserid){
-        System.out.println("venueApi ishaveByUserId Start!");
+        System.out.println("tBooking ishaveByUserId Start!");
         String resStr = "";
         try{
             //判断是否已经存在一个预约记录
@@ -200,7 +207,60 @@ public class TBookingController {
             resStr = ResponseUtil.error("ishaveByUserid error:"+e);
             e.printStackTrace();
         }
-        System.out.println("venueApi ishaveByUserId end!");
+        System.out.println("tBooking ishaveByUserId end!");
         return  resStr;
     }
+
+    /***
+     * 根据id获取预约记录
+     * @param id
+     */
+    @PostMapping(value = "getById")
+    public String getById(@RequestParam("id") String id){
+        System.out.println("tbookingApi getById Start");
+        if(StringUtil.isEmpty(id))return ResponseUtil.error("id不能为空");
+        String resStr ="";
+        try{
+            TBooking tBooking = tBookingService.getById(id);
+            resStr = ResponseUtil.success(tBooking);
+        }catch (Exception e){
+            resStr = ResponseUtil.error("ishaveByUserid error:"+e);
+            e.printStackTrace();
+        }
+        System.out.println("tbookingApi getById End");
+        return resStr;
+    }
+
+    /**
+    * 说明:根据id 修改预约状态
+    * @author   zhangxiaosan
+    * @create   2021/4/14
+    * @param    id
+    * @param    bookingStatus 预约状态 0取消预约 1预约成功，2预约失败 3预约已核销 4预约逾期
+    * @return
+    */
+    @PostMapping(value = "changeBookingStatusById")
+    public String changeBookingStatusById(
+        @RequestParam(value = "id") String id ,
+        @RequestParam(value = "bookingStatus") String bookingStatus
+    ){
+        System.out.println("changeBookingStatusById Start");
+        if(StringUtil.isEmpty(id))return ResponseUtil.error("id不能为空");
+        if(StringUtil.isEmpty(bookingStatus))return ResponseUtil.error("预约状态不能为空");
+        String resStr="";
+        try{
+            TBooking tBooking = tBookingService.getById(id);
+            if(tBooking == null) return ResponseUtil.error("找不到预约记录");
+            tBooking.setBookingStatus(Integer.valueOf(bookingStatus));
+            TBooking save = tBookingService.save(tBooking);
+            resStr = ResponseUtil.success(save);
+        }catch (Exception e){
+            resStr = ResponseUtil.error("changeBookingStatusById error:"+e);
+            e.printStackTrace();
+        }
+        System.out.println("changeBookingStatusById End");
+        return resStr;
+    }
+
+
 }

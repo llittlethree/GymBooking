@@ -22,14 +22,14 @@ public class TVenue {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   //一对一 一个场地对应一个场地类型
   @Column(name = "venue_category_id")
   private Long venueCategoryId;
 
   @OneToOne
-  @JoinColumn(name = "venue_category_id",referencedColumnName = "id")
+  @JoinColumn(name = "venue_category_id",referencedColumnName = "id",insertable = false,updatable = false)
   private TVenueCategory tVenueCategory;
 
 
@@ -40,24 +40,24 @@ public class TVenue {
   private BigDecimal price;
 
   @Column(name = "create_time")
-  private long createTime;
+  private Long createTime;
 
   @Column(name = "update_time")
-  private long updateTime;
+  private Long updateTime;
 
   @Column(name = "delete_time")
-  private long deleteTime;
+  private Long deleteTime;
 
   @Column(name = "remark")
   private String remark;
 
   @Column(name = "max_use")
-  private long maxUse;
+  private Integer maxUse;
 
   //一对多，一个场地对应多个资源
-  @OneToMany(targetEntity = TResource.class)
-  @JoinColumn(name = "venue_resource_id",referencedColumnName = "id")
-  private Set<TResource> tResourceSet = new HashSet<TResource>();
+  /*@OneToMany(targetEntity = TResource.class)
+  @JoinColumn(name = "venue_resource_id",referencedColumnName = "id",insertable = false,updatable = false)
+  private Set<TResource> tResourceSet = new HashSet<TResource>();*/
 
 
 }

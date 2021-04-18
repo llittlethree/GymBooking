@@ -19,7 +19,7 @@ public class TStudent {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "openid")
   private String openid;
@@ -37,25 +37,27 @@ public class TStudent {
   private String studentName;
 
   @Column(name = "student_sex")
-  private long studentSex;
+  private Long studentSex;
 
-  //@Column(name = "class_id")
+  @Column(name = "class_id")
+  private Long classId;
+
   //一对一 一个学生对应一个班级
   @OneToOne
-  @JoinColumn(name = "class_id",referencedColumnName = "id")
+  @JoinColumn(name = "class_id",referencedColumnName = "id",insertable = false,updatable = false)
   private TClass tClass;
 
   @Column(name = "create_time")
-  private long createTime;
+  private Long createTime;
 
   @Column(name = "update_time")
-  private long updateTime;
+  private Long updateTime;
 
   @Column(name = "delete_time")
-  private long deleteTime;
+  private Long deleteTime;
 
   @Column(name = "student_status")
-  private long studentStatus;
+  private Long studentStatus;
 
   @Column(name = "remark")
   private String remark;
