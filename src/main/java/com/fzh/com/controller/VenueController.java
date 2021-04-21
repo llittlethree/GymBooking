@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,8 @@ public class VenueController {
     * @return
     */
     @RequestMapping("showList")
-    public String showList(Model model){
+    public String showList(Model model, HttpSession session){
+        if (session.getAttribute("adminLoginInfo")==null) return "index";
         List<TVenueCategory> venueCategoryList = null;
         try {
             venueCategoryList = tVenueCategoryService.findAll("");
@@ -142,6 +144,50 @@ public class VenueController {
             resStr = ResponseUtil.success(res);
         } catch (Exception e) {
             resStr = ResponseUtil.error("异常："+e);
+            e.printStackTrace();
+        }
+        return resStr;
+    }
+
+
+    /**
+    * 说明: 场地类别页面显示
+    * @author   zhangxiaosan
+    * @create   2021/4/20
+    * @param
+    * @return
+    */
+    @RequestMapping("venueCategory")
+    public String venueCategory(HttpSession session){
+        if (session.getAttribute("adminLoginInfo")==null) return "index";
+        return "venueCategory";
+    }
+
+    /**
+    * 说明: 场地类型
+    * @author   zhangxiaosan
+    * @create   2021/4/20
+    * @param    venueCategoryName 类型名称
+    * @return
+    */
+    @ResponseBody
+    @RequestMapping("venueCategoryList")
+    public String venueCategoryList(
+            @RequestParam(value = "page",defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "order",defaultValue = "desc") String order,
+            @RequestParam(value = "orderBy",defaultValue = "id") String orderBy,
+            @RequestParam(value = "venueCategoryName",required = false) String venueCategoryName){
+        String resStr = ResponseUtil.layuiTablePage(0, "查询失败", null,0);
+
+        Pageable pageable = PageUtil.page(page, pageSize, order, orderBy);
+        try {
+            Page list = tVenueCategoryService.list(pageable, venueCategoryName);
+            System.out.println(list);
+            Map map = PageUtil.pageFormart(list);
+            resStr = ResponseUtil.layuiTablePage(0, "成功", map.get("datas"),Integer.valueOf(map.get("total").toString()) );
+        }catch (Exception e){
+            resStr = ResponseUtil.layuiTablePage(0, "查询异常", e,0);
             e.printStackTrace();
         }
         return resStr;

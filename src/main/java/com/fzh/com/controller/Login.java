@@ -4,6 +4,7 @@ import com.fzh.com.model.TAdmin;
 import com.fzh.com.sevice.TAdminService;
 import com.fzh.com.utils.ResponseUtil;
 import com.fzh.com.utils.StringUtil;
+import com.fzh.com.utils.WxLoginInfoUtil;
 import com.fzh.com.utils.privacy.Aes;
 import com.fzh.com.utils.privacy.Md5;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,32 @@ public class Login extends BaseController{
     @Autowired
     private TAdminService tAdminService;
 
+    /**
+    * 说明: 微信小程序登录
+    * @author   zhangxiaosan
+    * @create   2021/4/21
+    * @param
+    * @return
+    */
+    @RequestMapping(value = "wxappLogin")
+    @ResponseBody
+    public String wxappLogin(
+            @RequestParam(value = "code") String code
+    ){
+        if(StringUtil.isEmpty(code))return ResponseUtil.error("code不能为空");
+        String resStr = "";
+        try {
+            String openidAndSessionkey = WxLoginInfoUtil.getOpenidAndSessionkey(code);
+            resStr = ResponseUtil.success(openidAndSessionkey);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return resStr;
+    }
 
     /**
     * 说明: 显示登录页面
@@ -81,5 +111,21 @@ public class Login extends BaseController{
     @ResponseBody
     public String logout(@RequestHeader(value = "X-Token") String token){
         return null;
+    }
+
+
+    @PostMapping(value = "/loginOut")
+    @ResponseBody
+    public String loginOut( HttpSession session){
+        //System.out.println("================>"+session.getAttribute("adminLoginInfo") == null+","+session.getAttribute("adminLoginInfo"));
+        System.out.println("============");
+        System.out.println(session.getAttribute("adminLoginInfo") );
+        System.out.println("============");
+        if(session.getAttribute("adminLoginInfo") != null){
+            session.removeAttribute("adminLoginInfo");
+            session.setAttribute("adminLoginInfo",null);
+            return ResponseUtil.success("成功");
+        }
+        return ResponseUtil.error("失败");
     }
 }

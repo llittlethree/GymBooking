@@ -41,6 +41,13 @@
                 </button>
             </div>
         </div>
+        <div class="layui-col-md1">
+            <div class="grid-demo grid-demo-bg1">
+                <button type="button" id="clearSearch" 	class="layui-btn layui-btn-primary">
+                    <icon class='layui-icon layui-icon-refresh-3'></icon>清空
+                </button>
+            </div>
+        </div>
     </div>
 
     <table class="layui-hide" id="starting_useingActivitysList" lay-filter="starting_useingActivitysList" ></table>
@@ -200,6 +207,10 @@
             /**
              * 模糊查找  adminName adminSex adminStatus adminPhone
              * */
+            //清空
+            $("#clearSearch").click(function () {
+                history.go(0)
+            });
             $("#starting_findAdminBtn").click(function(){
                 var toolid = "#starting_toolbarDemouseingActivity";
                 var url="/gymBooking/booking/list";
@@ -315,7 +326,7 @@
             toolbar: toolId,
             title: TBtitle,
             method: 'POST',
-            //where:where,
+            where:{bookingStatus:[[${bookingStatus}]]},
             page: true,
             limit: 10,
             limits: [5, 7, 8, 10],

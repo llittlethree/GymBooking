@@ -17,30 +17,7 @@
 <div class="layui-row layui-col-space10 layui-form">
     <div class="layui-col-md2">
         <div class="grid-demo grid-demo-bg2">
-            <select name="venueCategoryId" id="venueCategoryId" lay-filter="venueCategoryId" >
-                <option id="" value="">场地类型</option>
-                <option th:each='item:${venueCategoryList}' th:text='${item.venueCategoryName}' th:value='${item.id}'></option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-col-md2">
-        <div class="grid-demo grid-demo-bg2">
-            <input type="tel" name="venueName" id="venueName" placeholder="场地名称"  class="layui-input">
-        </div>
-    </div>
-    <div class="layui-col-md1">
-        <div class="grid-demo grid-demo-bg1">
-            <input type="number" name="maxUse" id="maxUse" placeholder="最大使用量"  class="layui-input">
-        </div>
-    </div>
-    <div class="layui-col-md1">
-        <div class="grid-demo grid-demo-bg1">
-            <input type="number" name="price" id="price" placeholder="价格"  class="layui-input">
-        </div>
-    </div>
-    <div class="layui-col-md3">
-        <div class="grid-demo grid-demo-bg3">
-            <input type="text" class="layui-input" id="test16" placeholder="创建时间段" >
+            <input type="tel" name="venueCategoryName" id="venueCategoryName" placeholder="场地类别名称"  class="layui-input">
         </div>
     </div>
     <div class="layui-col-md2">
@@ -62,8 +39,8 @@
 <table class="layui-hide" id="starting_useingActivitysList" lay-filter="starting_useingActivitysList" ></table>
 <script type="text/html" id="starting_toolbarDemouseingActivity">
     <div class="layui-btn-container">
-        <button  class="layui-btn layui-btn-sm" id="insertBtn"  lay-event="insertBtn" title="添加">
-            <icon class='layui-icon'>&#xe61f;</icon>添加场地
+        <button  class="layui-btn layui-btn-sm" id="insertBtn"  lay-event="insertBtn" title="添加类别">
+            <icon class='layui-icon'>&#xe61f;</icon>添加类别
         </button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" id="starting_getCheckData" lay-event="starting_getCheckData"  title="删除已选项">
             <icon class='layui-icon'>&#xe640;</icon>删除已选项
@@ -75,39 +52,9 @@
 <div id="showinfo" style="display: none;" class="layui-form">
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">场地名称:</label>
+            <label class="layui-form-label">场地类型名称:</label>
             <div class="layui-input-inline">
-                <div id="showVenueName"></div>
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">场地类型:</label>
-            <div class="layui-input-inline">
-                <div id="showVenueCategory"></div>
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">价格:</label>
-            <div class="layui-input-inline">
-                <div id="showPrice"></div>
-            </div>
-        </div>
-        <div class="layui-inline" id="timebox">
-            <label class="layui-form-label">创建时间:</label>
-            <div class="layui-input-inline">
-                <div id="showCreateTime"></div>
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">最大使用量:</label>
-            <div class="layui-input-inline">
-                <div id="showMaxUse"></div>
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">备注:</label>
-            <div class="layui-input-inline">
-                <div id="showRemark"></div>
+                <div id="showVenueCategoryName"></div>
             </div>
         </div>
         <div class="layui-inline" id="optionBtnBox" style="width: 90%;">
@@ -130,53 +77,30 @@
             element.init();
             form.render();
 
-            var timeValue="~";
-            laydate.render({
-                elem: '#test16'
-                ,type: 'datetime'
-                ,range: '~'
-                ,format: 'yyyy-MM-dd HH:mm:ss',
-                done: function(value, date, endDate){
-                    console.log(value, date, endDate)
-                    timeValue = value;
-                }
-            });
 
 
             //显示列表
             var cols = [
                 {type: 'checkbox', width: "5%"},
                 {field: 'id', title: 'ID', width: "5%"},//
-                {field: 'venueName', title: '场地名称' },
-                {field: 'venue_category_id', title: '场地类型' ,templet:function (res) {
-                        return res.tVenueCategory.venueCategoryName;
-                    }},
-                {field: 'price', title: '价格',width: "5%"},
-                {field: 'maxUse', title: '最大使用量',width: "10%"},
-
-                {field: 'createTime', title: '创建时间', width: "15%",templet:function (res) {
-                        return layui.util.toDateString(res.createTime*1000, 'yyyy-MM-dd HH:mm:ss')
-                }},
+                {field: 'venueCategoryName', title: '名称' },
                 {
                     title: '操作', width:180, templet: function (data) {
-                        return "<button  title='查看' onclick='showinfo("+data.id+")' class='layui-btn layui-btn-xs' >" +
-                            "详情" +
-                            "</button>" +
-                            "<button title='修改' class='layui-btn  layui-btn-warm layui-btn-xs' onclick='updateopen("+data.id+")'>" +
+                        return "<button title='修改' class='layui-btn  layui-btn-warm layui-btn-xs' onclick='updateopen("+data.id+")'>" +
                             "修改" +
                             "</button>" +
-                            "<button  title='删除记录' class='layui-btn layui-btn-danger layui-btn-xs' onclick='deleteOne(\"/gymBooking/venue/deleteOne\"," + data.id + ")'>" +
+                            "<button  title='删除记录' class='layui-btn layui-btn-danger layui-btn-xs' onclick='deleteOne(\"/gymBooking/venueCategoryApi/deleteOne\"," + data.id + ")'>" +
                             "删除" +
                             "</button>";
                     }
                 }];
-            Dbtable("#starting_useingActivitysList", "/gymBooking/venue/list", "#starting_toolbarDemouseingActivity",
+            Dbtable("#starting_useingActivitysList", "/gymBooking/venue/venueCategoryList", "#starting_toolbarDemouseingActivity",
                 "场地列表", null, cols,{page:1,limit:10});
 
             /**
              * 批量删除
              * */
-            DELALl($("#starting_getCheckData"),"toolbar(starting_useingActivitysList)","/gymBooking/venue/deleteAll");
+            DELALl($("#starting_getCheckData"),"toolbar(starting_useingActivitysList)","/gymBooking/venueCategoryApi/deleteAll");
 
 
             /**
@@ -188,61 +112,34 @@
             });
             $("#starting_findAdminBtn").click(function(){
                 var toolid = "#starting_toolbarDemouseingActivity";
-                var url="/gymBooking/venue/list";
+                var url="/gymBooking/venue/venueCategoryList";
                 var tableid="#starting_useingActivitysList";
                 var tableNAame="场地列表";
                 if(
-                    ($("#venueName").val()==""||$("#venueName").val()==null||$("#venueName").val().length<=0 ) &&
-                    ($("#venueCategoryId").val()===""||$("#venueCategoryId").val()==null||$("#venueCategoryId").val()<=0 ) &&
-                    ($("#maxUse").val()===""||$("#maxUse").val()==null||$("#maxUse").val()<=0) &&
-                    ($("#price").val()===""||$("#price").val()==null||$("#price").val()<=0) &&
-                    (timeValue == null && timeValue === "" && timeValue.split("~").length<=0)
+                    ($("#venueCategoryName").val()==""||$("#venueCategoryName").val()==null||$("#venueCategoryName").val().length<=0 )
                 ){
                     Dbtable(tableid,url,toolid,tableNAame,null,cols);
 
                 }else{
                     var where ={};
-                    if ($("#venueCategoryId").val()!==""||$("#venueCategoryId").val()!=null||$("#venueCategoryId").val()>=0 ){
-                        where.venueCategoryId = $("#venueCategoryId").val();
+
+                    if(!$("#venueCategoryName").val()==""||!$("#venueCategoryName").val()==null||!$("#venueCategoryName").val().length<=0){
+                        where.venueCategoryName=$("#venueCategoryName").val();
                     }
-                    if(!$("#venueName").val()==""||!$("#venueName").val()==null||!$("#venueName").val().length<=0){
-                        where.venueName=$("#venueName").val();
-                    }
-                    if(!$("#maxUse").val()==""||!$("#maxUse").val()==null||!$("#maxUse").val()<=0){
-                        where.maxUse=$("#maxUse").val();
-                    }
-                    if(!$("#price").val()==""||!$("#price").val()==null||!$("#price").val()<=0){
-                        where.price=$("#price").val();
-                    }
-                    if(timeValue != null && timeValue !== "" && timeValue.split("~").length>0){
-                        var start = timeValue.split("~")[0];
-                        var end = timeValue.split("~")[1];
-                        where.createTimeStart = start;
-                        where.createTimeEnd = end;
-                    }
+
                     Dbtable(tableid,"",toolid,tableNAame,like(url,where).data,cols);
                 }
             });
 
 
             /**
-            * 添加
-            * */
+             * 添加
+             * */
             $("#insertBtn").click(function () {
                 $('#showinfo').hide();
 
-                $("#showVenueName").css({"margin":"10px 0 0 0"}).html('<input type="tel" name="venueName_add" id="venueName_add" placeholder="场地名称"  class="layui-input">')
-                var html = ' <select name="venueCategoryId_add" id="venueCategoryId_add" lay-filter="venueCategoryId_add" ><option id="" value="">场地类型</option>';
-                var venueCategoryList = [[${venueCategoryList}]]
-                for(var i=0;i<venueCategoryList.length;i++){
-                    html += '<option value="'+venueCategoryList[i].id+'">'+venueCategoryList[i].venueCategoryName+'</option>';
-                }
-                html += "</select>"
-                $("#showVenueCategory").css({"margin":"10px 0 0 0"}).html(html);
-                $("#showPrice").css({"margin":"10px 0 0 0"}).html('<input type="number" name="price_add" id="price_add" placeholder="价格"  class="layui-input">')
-                $("#showMaxUse").css({"margin":"10px 0 0 0"}).html('<input type="number" name="maxUse_add" id="maxUse_add" placeholder="最大使用量"  class="layui-input">')
-                $("#showRemark").css({"margin":"10px 0 0 0"}).html('<textarea name="remark" placeholder="备注" id="remark_add" class="layui-textarea"></textarea>')
-                $("#timebox").css({"display":'none'})
+                $("#showVenueCategoryName").css({"margin":"10px 0 0 0"}).html('<input type="tel" name="showVenueCategoryName_add" id="showVenueCategoryName_add" placeholder="类型名称"  class="layui-input">')
+
                 var index = layer.open({
                     type: 1,
                     title:'添加',
@@ -267,41 +164,6 @@
         window.location.reload();
     }
 
-    /**详情查看*/
-    function showinfo(id){
-        $('#showinfo').hide();
-        layer.open({
-            type: 1,
-            title:'详情',
-            content: $('#showinfo') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-        });
-        //根据id查找详情
-        $.ajax({
-            url:"/gymBooking/venueApi/getByid",
-            type: 'POST',
-            dataType: 'json',
-            traditional:true,
-            data: {
-                id:id
-            },
-        }).done(function(data) {
-            console.log(data)
-            if(data.code!=20000){
-                layer.msg("异常");
-                return false;
-            }
-            $("#showVenueName").css({"margin":"10px 0 0 0"}).text(data.data.venueName)
-            $("#showVenueCategory").css({"margin":"10px 0 0 0"}).text(data.data.tVenueCategory.venueCategoryName)
-            $("#showPrice").css({"margin":"10px 0 0 0"}).text("$"+data.data.price)
-            $("#showCreateTime").css({"margin":"10px 0 0 0"}).html(layui.util.toDateString(data.data.createTime*1000, 'yyyy-MM-dd HH:mm:ss'))
-            $("#showMaxUse").css({"margin":"10px 0 0 0"}).text(data.data.maxUse)
-            $("#showremark").css({"margin":"10px 0 0 0"}).text(data.data.remark)
-
-        }).fail(function(data) {
-            console.log(data)
-        });
-
-    }
 
     /**表格中的事件*/
     function doSomethingOnTable(url,id,sign) {
@@ -466,27 +328,17 @@
      * 执行添加
      */
     function add(index){
-        var  venueName = $("#venueName_add").val()
-        var  venueCategoryId = $("#venueCategoryId_add").val()
-        var  price = $("#price_add").val()
-        var  maxUse = $("#maxUse_add").val()
-        var  remark= $("#remark_add").val()
-        console.log("venueName",venueName)
-        console.log("venueCategoryId",venueCategoryId)
-        console.log("price",price)
-        console.log("maxUse",maxUse)
-        console.log("remark",remark)
+        var  venueNCategoryName = $("#showVenueCategoryName_add").val()
+
+        console.log("venueNCategoryName",venueNCategoryName)
+
         $.ajax({
-            url:"/gymBooking/venueApi/add",
+            url:"/gymBooking/venueCategoryApi/add",
             type: 'POST',
             dataType: 'json',
             traditional:true,
             data:{
-                venueCategoryId:venueCategoryId,
-                price:price,
-                remark:remark,
-                maxUse:maxUse,
-                venueName:venueName
+                venueNCategoryName:venueNCategoryName
             },
             async:false,
         }).done(function(data) {
@@ -516,7 +368,7 @@
         });
         //根据id查找详情
         $.ajax({
-            url:"/gymBooking/venueApi/getByid",
+            url:"/gymBooking/venueCategoryApi/getByid",
             type: 'POST',
             dataType: 'json',
             traditional:true,
@@ -529,20 +381,8 @@
                 layer.msg("异常");
                 return false;
             }
-            $("#showVenueName").css({"margin":"10px 0 0 0"}).html('<input type="tel" name="venueName_update" id="venueName_update" placeholder="场地名称" value="'+data.data.venueName+'" class="layui-input">')
-            var html = ' <select name="venueCategoryId_update" id="venueCategoryId_update" lay-filter="venueCategoryId_update" ><option id="" value="'+data.data.tVenueCategory.id+'">'+data.data.tVenueCategory.venueCategoryName+'</option>';
-            var venueCategoryList = [[${venueCategoryList}]]
-            for(var i=0;i<venueCategoryList.length;i++){
-                if (venueCategoryList[i].id != data.data.tVenueCategory.id){
-                    html += '<option value="'+venueCategoryList[i].id+'">'+venueCategoryList[i].venueCategoryName+'</option>';
-                }
-            }
-            html += "</select>"
-            $("#showVenueCategory").css({"margin":"10px 0 0 0"}).html(html);
-            $("#showPrice").css({"margin":"10px 0 0 0"}).html('<input type="number" name="price_update" id="price_update" placeholder="价格" value="'+data.data.price+'" class="layui-input">')
-            $("#showMaxUse").css({"margin":"10px 0 0 0"}).html('<input type="number" name="maxUse_update" id="maxUse_update" placeholder="最大使用量" value="'+data.data.maxUse+'" class="layui-input">')
-            $("#showRemark").css({"margin":"10px 0 0 0"}).html('<textarea name="remark" placeholder="备注" id="remark_update" class="layui-textarea" value="'+data.data.remark+'"></textarea>')
-            $("#timebox").css({"display":'none'})
+            $("#showVenueCategoryName").css({"margin":"10px 0 0 0"}).html('<input type="tel" name="venueNCategoryName_update" id="venueNCategoryName_update" placeholder="场地名称" value="'+data.data.venueCategoryName+'" class="layui-input">')
+
             var index = layer.open({
                 type: 1,
                 title:'添加',
@@ -560,24 +400,17 @@
     //执行修改
     function update(id,index) {
         console.log(id,index)
-        console.log("venueName_update:"+$("#venueName_update").val())
-        console.log("venueCategoryId_update:"+$("#venueCategoryId_update").val())
-        console.log("price_update:"+$("#price_update").val())
-        console.log("maxUse_update:"+$("#maxUse_update").val())
-        console.log("remark_update:"+$("#remark_update").val())
+        console.log("venueNCategoryName_update:"+$("#venueNCategoryName_update").val())
+
 
         $.ajax({
-            url:"/gymBooking/venueApi/add",
+            url:"/gymBooking/venueCategoryApi/add",
             type: 'POST',
             dataType: 'json',
             traditional:true,
             data:{
                 id:id,
-                venueCategoryId:$("#venueCategoryId_update").val(),
-                price:$("#price_update").val(),
-                remark:$("#remark_update").val(),
-                maxUse:$("#maxUse_update").val(),
-                venueName:$("#venueName_update").val()
+                venueNCategoryName:$("#venueNCategoryName_update").val(),
             },
             async:false,
         }).done(function(data) {

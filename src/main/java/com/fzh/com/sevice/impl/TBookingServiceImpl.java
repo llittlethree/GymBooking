@@ -177,4 +177,17 @@ public class TBookingServiceImpl implements TBookingService {
         if (save!=null)return 1;
         return 0;
     }
+
+    /**
+     * 说明: 根据核销码获取预约记录
+     *
+     * @param code 核销码
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/21
+     */
+    @Override
+    public TBooking getByNumber(String code) throws Exception {
+        return tBookingServiceDao.findByNumber(code);
+    }
 }

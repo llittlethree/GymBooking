@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Map;
 
@@ -36,7 +37,8 @@ public class BookingController {
      * @return
      */
     @RequestMapping(value = "showBooking",method = RequestMethod.GET)
-    public String showBooking(Model model, @RequestParam(value = "bookingStatus",defaultValue ="1" )Integer  bookingStatus){
+    public String showBooking(Model model, HttpSession session, @RequestParam(value = "bookingStatus",defaultValue ="1" )Integer  bookingStatus){
+        if (session.getAttribute("adminLoginInfo")==null) return "index";
         model.addAttribute("bookingStatus",bookingStatus);
         return "showBooking";
     }

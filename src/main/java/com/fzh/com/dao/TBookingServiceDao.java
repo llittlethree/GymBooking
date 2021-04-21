@@ -15,4 +15,6 @@ public interface TBookingServiceDao extends JpaRepository<TBooking,Long>, JpaSpe
     List<TBooking> findByBookingStatus(@Param("BookingStatus") int bookingStatus);
 
     List<TBooking> findByBookingStatusAndBookingUserid(int bookingStatus, Long bookingUserid);
+
+    TBooking findByNumber(String code);
 }

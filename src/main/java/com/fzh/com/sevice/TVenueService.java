@@ -72,4 +72,5 @@ public interface TVenueService {
      * @return
      */
     int deleteOne(Integer id)throws Exception;
+
 }

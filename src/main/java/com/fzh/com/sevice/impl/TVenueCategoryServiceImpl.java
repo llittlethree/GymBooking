@@ -1,11 +1,18 @@
 package com.fzh.com.sevice.impl;
 import com.fzh.com.dao.TVenueCategoryServiceDao;
+import com.fzh.com.model.TVenue;
 import com.fzh.com.model.TVenueCategory;
 import com.fzh.com.sevice.TVenueCategoryService;
+import com.fzh.com.utils.DateUtil;
+import com.fzh.com.utils.ResponseUtil;
 import com.fzh.com.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,4 +56,75 @@ public class TVenueCategoryServiceImpl implements TVenueCategoryService {
             }
         });
     }
+
+    /**
+     * 说明: 场地类型
+     *
+     * @param pageable
+     * @param venueCategoryName 类型名称
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/20
+     */
+    @Override
+    public Page list(Pageable pageable, String venueCategoryName) throws Exception {
+        return tVenueCategoryServiceDao.findAll(new Specification<TVenueCategory>() {
+            @Override
+            public Predicate toPredicate(Root<TVenueCategory> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+                List<Predicate> predicateList = new ArrayList<>();
+
+                if(StringUtil.isNoEmpty(venueCategoryName)){
+                    predicateList.add(cb.like(root.get("venueCategoryName").as(String.class),"%"+venueCategoryName+"%"));
+                }
+
+                Predicate[] pre = new Predicate[predicateList.size()];
+                criteriaQuery.where(predicateList.toArray(pre));
+                return cb.and(predicateList.toArray(pre));
+            }
+        },pageable);
+    }
+
+    /**
+     * 说明: 删除一条记录
+     *
+     * @param id
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/16
+     */
+    @Override
+    public Integer deleteOne(Integer id) throws Exception {
+        TVenueCategory one = tVenueCategoryServiceDao.getOne(Long.valueOf(id));
+        if (one == null) return 0;
+        tVenueCategoryServiceDao.delete(one);
+        return 1;
+    }
+
+    /**
+     * 说明: 添加类型
+     *
+     * @param tVenueCategory
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/20
+     */
+    @Override
+    public TVenueCategory save(TVenueCategory tVenueCategory) throws Exception {
+        return tVenueCategoryServiceDao.save(tVenueCategory);
+    }
+
+    /**
+     * 说明: 根绝id查找类型
+     *
+     * @param id
+     * @return
+     * @author zhangxiaosan
+     * @create 2021/4/20
+     */
+    @Override
+    public TVenueCategory getByid(String id) throws Exception {
+        return tVenueCategoryServiceDao.findById(Long.valueOf(id)).get();
+    }
+
+
 }

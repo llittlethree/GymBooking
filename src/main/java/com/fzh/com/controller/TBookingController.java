@@ -262,5 +262,40 @@ public class TBookingController {
         return resStr;
     }
 
-
+    /**
+    * 说明: 核销
+    * @author   zhangxiaosan
+    * @create   2021/4/21
+    * @param
+    * @return
+    */
+    @RequestMapping(value = "checkBooking")
+    public String checkBooking(
+            @RequestParam(value = "id",required = false) String id,
+            @RequestParam(value = "code") String code
+    ){
+        System.out.println("param id:"+id);
+        System.out.println("param code:"+code);
+        if(StringUtil.isEmpty(code)) return ResponseUtil.error("核销码不能为空");
+        String resStr = "";
+        try {
+            TBooking tBooking = tBookingService.getByNumber(code);
+            if(tBooking!=null){
+                //0取消预约 1预约成功，2预约失败 3预约已核销 4预约逾期
+                if (tBooking.getBookingStatus() == 0) return ResponseUtil.error("预约已取消，无法核销");
+                if (tBooking.getBookingStatus() == 2) return ResponseUtil.error("预约失败，无法核销");
+                if (tBooking.getBookingStatus() == 3) return ResponseUtil.error("预约已核销，无法重复核销");
+                if (tBooking.getBookingStatus() == 4) return ResponseUtil.error("预约已逾期，无法核销");
+                Long id1 = tBooking.getId();
+                tBooking.setBookingStatus(3);
+                TBooking save = tBookingService.save(tBooking);
+                if(save==null)return ResponseUtil.error("核销失败");
+                resStr = ResponseUtil.success("核销成功");
+            }
+        } catch (Exception e) {
+            resStr = ResponseUtil.error(" checkBooking error:"+e);
+            e.printStackTrace();
+        }
+        return resStr;
+    }
 }

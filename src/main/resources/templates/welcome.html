@@ -16,11 +16,11 @@
 <body>
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">体育馆预约管理系统</div>
+        <div class="layui-logo" onclick="javascript:history.go(0);">体育馆预约管理系统</div>
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
-                <a href="javascript:;">
+                <a href="javascript:;" id="loginout">
                     退出登录
                 </a>
                 <!--<a href="javascript:;">
@@ -52,7 +52,7 @@
                     <a href="javascript:;">场地管理</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" onclick="To('/gymBooking/venue/showList')">场地列表</a></dd>
-                        <dd><a href="javascript:;" onclick="To('/gymBooking/venue/venueCategoryList')">场地类别</a></dd>
+                        <dd><a href="javascript:;" onclick="To('/gymBooking/venue/venueCategory')">场地类别</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -74,15 +74,40 @@
 <script>
     //JavaScript代码区域
     $(function () {
-        var element;
-        layui.use('element', function(){
+        var element,layer;
+        layui.use(['element','layer'], function(){
             element = layui.element;
-
-
-
+            layer = layui.layer;
         });
 
+        //iframe默认加载的页面
+        $("div.layui-body div iframe").attr('src','/gymBooking/welcome/default');
 
+        $("#loginout").click(function () {
+            layer.confirm('确定退出当前账号?', {icon: 3, title:'提示'}, function(index){
+                $.ajax({
+                    url: "/gymBooking/login/loginOut",
+                    type: 'POST',
+                    dataType: 'json',
+                    data:{},
+                }).done(function(data) {
+                    //console.log("success");
+                    console.log(data);
+                    if(data.code==20000){
+                        layer.msg("成功",{time:1500,anim:0},function(){
+                            window.location.href="/gymBooking/";
+                        });
+                    }else{
+                        layer.msg("失败",{time:1500,anim:0});
+                    }
+                }).fail(function() {
+                    console.log("error");
+                    layer.msg("异常");
+                });
+
+                layer.close(index);
+            });
+        })
     })
     //跳转的方法
     function To(url) {

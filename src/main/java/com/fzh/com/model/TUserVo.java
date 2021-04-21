@@ -56,4 +56,6 @@ public class TUserVo {
 
     private String remark;
     private Integer sign;//0学生，1管理
+    private String sessionKey;
+    private String openId;
 }

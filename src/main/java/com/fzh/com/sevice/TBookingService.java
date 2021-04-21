@@ -78,4 +78,13 @@ public interface TBookingService {
     * @return
     */
     int deleteOne(Integer id)throws Exception;
+
+    /**
+    * 说明: 根据核销码获取预约记录
+    * @author   zhangxiaosan
+    * @create   2021/4/21
+    * @param    code 核销码
+    * @return
+    */
+    TBooking getByNumber(String code)throws Exception;
 }

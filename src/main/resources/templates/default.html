@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/jquery.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="layui-row layui-col-space10" style="width: 98%;">
+        <div class="layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">核销工作台</div>
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        <div class="layui-col-md9">
+                            核销码：<br>
+                            <input type="text" name="code" id="code"  required  lay-verify="required" placeholder="核销码" autocomplete="off" class="layui-input"><br>
+<!--                            <button class="layui-btn" title="按回车键继续添加" id="ContinueToAdd">继续添加</button>-->
+                            <button class="layui-btn" id="checkSure">确认核销</button>
+                        </div>
+                        <div class="layui-col-md3" id="numList"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">今日预约数</div>
+                <div class="layui-card-body">
+                   123
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">卡片面板</div>
+                <div class="layui-card-body">
+                    卡片式面板面板通常用于非白色背景色的主体内<br>
+                    从而映衬出边框投影
+                </div>
+            </div>
+        </div>-->
+    </div>
+
+</body>
+</html>
+
+<script>
+    var element,layer,form,layedit,laydate,table;
+    $(function () {
+        layui.use(['element', 'form','laydate', 'table', 'layer'], function () {
+            element = layui.element;
+            form = layui.form;
+            table = layui.table;
+            layer = layui.layer;
+            laydate = layui.laydate;
+            element.init();
+            form.render();
+
+            $("#checkSure").click(function () {
+                var codes = $("#code").val();
+                var code = codes.split(",");
+                console.log(code,codes)
+                for (var i=0;i<code.length;i++){
+                    var codeAndId = code[i].split(".")
+                    var param={}
+                    if (codeAndId.length>1){
+                        var id = codeAndId[1]
+                        param['id']=id
+                    }
+                    var codeItem = codeAndId[0]
+                    param['code']=codeItem
+
+                    $.ajax({
+                        url:"/gymBooking/bookingApi/checkBooking",
+                        type: 'POST',
+                        dataType: 'json',
+                        traditional:true,
+                        data:param,
+                    }).done(function(data) {
+                        console.log(data)
+                        if(data.code!=20000) {
+                            layer.msg(data.message);
+                            return false;
+                        }
+                        layer.msg("核销成功");
+                        $("#code").val("");
+                    }).fail(function(data) {
+
+                    });
+
+                }
+            });
+
+        });
+
+    });
+</script>

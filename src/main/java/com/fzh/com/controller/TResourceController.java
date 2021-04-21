@@ -5,6 +5,7 @@ import com.fzh.com.sevice.TResourceService;
 import com.fzh.com.utils.ResponseUtil;
 import com.fzh.com.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -105,6 +106,16 @@ public class TResourceController {
         System.out.println("findFile is end!");
         return returnStr;
     }
+
+
+
+    @Value("${picPath}")
+    private String picPath;
+    /***
+     * 上传图片
+     *
+     */
+
 
 
 }
