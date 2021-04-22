@@ -32,4 +32,8 @@ public class TResource {
 
     @Column(name = "resource_code")
     private String  resourceCode;
+
+    @Column(name = "use_status")
+    private Integer  useStatus;
+
 }

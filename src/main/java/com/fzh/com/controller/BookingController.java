@@ -98,7 +98,7 @@ public class BookingController {
             Map map = PageUtil.pageFormart(list);
             resStr = ResponseUtil.layuiTablePage(0, "成功", map.get("datas"),Integer.valueOf(map.get("total").toString()) );
         }catch (Exception e){
-            resStr = ResponseUtil.layuiTablePage(0, "查询异常", e,0);
+            resStr = ResponseUtil.layuiTablePage(1, "查询异常", e,0);
             e.printStackTrace();
         }
         System.out.println("tBooking list End!");

@@ -30,15 +30,19 @@
                 </div>
             </div>
         </div>
-        <!--<div class="layui-col-md4">
+        <!--<div class="layui-col-md8">
             <div class="layui-card">
-                <div class="layui-card-header">今日预约数</div>
+                <div class="layui-card-header">轮播图上传</div>
                 <div class="layui-card-body">
-                   123
+                    <div class="layui-row layui-col-md9 layui-upload">
+                        <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
+                        <button type="button" class="layui-btn" id="test9">开始上传</button>
+                        <table class="layui-hide" id="starting_useingActivitysList" lay-filter="starting_useingActivitysList" ></table>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="layui-col-md4">
+        </div>-->
+        <!--<div class="layui-col-md4">
             <div class="layui-card">
                 <div class="layui-card-header">卡片面板</div>
                 <div class="layui-card-body">
@@ -48,22 +52,37 @@
             </div>
         </div>-->
     </div>
-
+    <div class="layui-row layui-col-space10" style="width: 98%;">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-header">轮播图上传</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-md9 layui-upload">
+                        <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
+                        <button type="button" class="layui-btn" id="test9">开始上传</button>
+                        <table class="layui-hide" id="starting_useingActivitysList" lay-filter="starting_useingActivitysList" ></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
 <script>
-    var element,layer,form,layedit,laydate,table;
+    var element,layer,form,layedit,laydate,table,upload;
     $(function () {
-        layui.use(['element', 'form','laydate', 'table', 'layer'], function () {
+        layui.use(['element', 'form','laydate', 'table', 'layer','upload'], function () {
             element = layui.element;
             form = layui.form;
             table = layui.table;
             layer = layui.layer;
             laydate = layui.laydate;
+            upload = layui.upload
             element.init();
             form.render();
 
+            //核销
             $("#checkSure").click(function () {
                 var codes = $("#code").val();
                 var code = codes.split(",");
@@ -99,7 +118,236 @@
                 }
             });
 
+            //选完文件后不自动上传
+            upload.render({
+                elem: '#test8'
+                ,url: '/gymBooking/resourceApi/uploadFile' //改成您自己的上传接口
+                ,auto: false
+                ,data: {
+                    refId:1,
+                    table:'t_test',
+                    fileCode:'test',
+                    type:'run'
+                }
+                //,multiple: true
+                ,bindAction: '#test9',
+                before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                    $("#test9").hide()
+                }
+                ,done: function(res){
+                    layer.msg('上传成功',function () {
+                        history.go(0)
+                    });
+                    console.log(res)
+                }
+            });
+
+
+
+
+            //显示列表
+            var cols = [
+                {type: 'checkbox', width: "5%"},
+                {field: 'id', title: 'ID', width: "9%"},//
+                {field: 'path', title: '地址' },
+                {field: 'refId', title: '关联id', width: "9%"},
+                {field: 'refTable', title: '关联表名',width: "10%"},
+                {field: 'resourceCode', title: '资源代码',width: "10%"},
+
+                {field: 'useStatus', title: '状态', width: "8%",templet:function (res) {
+                       if(res.useStatus==1) return "<span class='layui-btn layui-btn-xs' onclick='changeUseStatus("+res.id+",0)'>使用中</span>"
+                       if(res.useStatus!=1) return "<span class='layui-btn layui-btn-primary layui-btn-xs'  onclick='changeUseStatus("+res.id+",1)'>未使用</span>"
+                    }},
+                {
+                    title: '操作', width:'8%', templet: function (data) {
+                        return "<button  title='删除' class='layui-btn layui-btn-danger layui-btn-xs' onclick='deleteOne(\"/gymBooking/resourceApi/deleteOne\"," + data.id + ")'>" +
+                            "删除" +
+                            "</button>";
+                    }
+                }];
+            Dbtable("#starting_useingActivitysList", "/gymBooking/resourceApi/list", "#starting_toolbarDemouseingActivity",
+                "场地列表", null, cols,{refTable:'t_test',resourceCode:'test'});
+
+            /**
+             * 批量删除
+             * */
+            DELALl($("#starting_getCheckData"),"toolbar(starting_useingActivitysList)","/gymBooking/resourceApi/deleteAll");
+
         });
 
     });
+
+    /**表格中的事件*/
+    function doSomethingOnTable(url,id,sign) {
+        $.ajax({
+            url:url,
+            type: 'POST',
+            dataType: 'json',
+            traditional:true,
+            data: {
+                id:id
+            },
+        }).done(function(data) {
+            setToast(data.code,'delete');
+        }).fail(function(data) {
+            setToast(data.code,'delete');
+        });
+    }
+    /**数据表格*/
+    function Dbtable(tableId,DbUrl,toolId,TBtitle,data,cols,where) {
+        //console.log(changeDate(1590940800));
+        table.render({
+            elem: tableId,
+            url: DbUrl,
+            toolbar: toolId,
+            title: TBtitle,
+            method: 'POST',
+            where:where,
+            page: true,
+            limit: 10,
+            limits: [5, 7, 8, 10],
+            groups: 5,
+            defaultToolbar: ['print'],//删除工具栏默认工具'filter','print',
+            data: data,
+            cols: [cols],
+            request:function(e){
+                console.log("table re",e);
+            },
+            done: function (e) {
+                console.log("table data",e);
+                return e
+            }
+        });
+    }
+
+    /**事件执行显示结果*/
+    function setToast(data,sign) {
+        if(data==20000){
+            if(sign==="delete"){
+                layer.msg("删除成功", {icon:6,time:1500},function(){
+                    window.location.reload();
+                });
+            }
+            if(sign==="changeUseStatus"){
+                layer.msg("修改成功", {icon:6,time:1500},function(){
+                    window.location.reload();
+                });
+            }
+        }else{
+            if(sign==="delete"){
+                layer.msg("删除失败", {icon:2,time:1500},function(){
+                    window.location.reload();
+                });
+            }
+            if(sign==="changeUseStatus"){
+                layer.msg("状态修改失败", {icon:2,time:1500},function(){
+                    window.location.reload();
+                });
+            }
+        }
+    }
+
+    /*
+    * 批量删除
+    * */
+    function DELALl(selector,tablebar,url) {
+        //批量删除
+        var id_arr=[];//数组
+        $(selector).click(function(){
+            table.on(tablebar, function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                console.log(checkStatus);
+
+                if(checkStatus.isAll===true){
+                    //console.log("全选");
+                    $(checkStatus.data).each(function(index,element){
+                        id_arr[index]=element.id;
+                    });
+                    if(id_arr.length==0){
+                        layer.msg("未选择");
+                        id_arr=[];
+                    }else{
+                        layer.confirm('确定批量删除吗？请谨慎操作！',{icon: 3, title:'警告'}, function(index){
+                            deleteFlaseGroup(url,id_arr);
+                            layer.close(index);
+                            id_arr=[];
+                        });
+                    }
+                }
+
+                if(checkStatus.isAll===false){
+                    //console.log("单选");
+                    $(checkStatus.data).each(function(index,element){
+                        id_arr[index]=element.id;
+                    });
+                    if(id_arr.length==0){
+                        layer.msg("未选择");
+                        id_arr=[];
+                    }else{
+                        layer.confirm(
+                            '确定批量删除吗？请谨慎操作！',
+                            {icon: 3, title:'警告'},
+                            function(index){
+                                deleteFlaseGroup(
+                                    url,
+                                    id_arr
+                                );
+                                layer.close(index);
+                                id_arr=[];
+                            });
+                    }
+                }
+            });
+        });
+    }
+    //批量删除
+    function deleteFlaseGroup(url,id_arr){
+        //console.log(id_arr);
+        $.ajax({
+            url:url,
+            type: 'POST',
+            dataType: 'json',
+            traditional:true,
+            data: {
+                ids:id_arr//JSON.stringify(id_arr)
+            },
+        }).done(function(data) {
+            //console.log("ajax返回:")
+            //console.log(data);
+            setToast(data.code,'delete');
+        })
+        .fail(function(data) {
+            //console.log('error');
+            //console.log(data);
+            setToast(data.code,'delete');
+        });
+    }
+    /**点击表格中的删除按钮*/
+    function deleteOne(url,id) {
+        layer.confirm('确定要删除吗？',{icon: 3, title:'警告'}, function(index){
+            doSomethingOnTable(url,id,"delete")
+            layer.close(index);
+        });
+    }
+    /**
+     * 改变状态
+     * */
+    function changeUseStatus(id,changeUseStatus){
+        $.ajax({
+            url:"/gymBooking/resourceApi/changeUseStatus",
+            type: 'POST',
+            dataType: 'json',
+            traditional:true,
+            data: {
+                id:id,//JSON.stringify(id_arr)
+                useStatus:changeUseStatus,//JSON.stringify(id_arr)
+            },
+        }).done(function(data) {
+            console.log(data)
+            setToast(data.code,'changeUseStatus')
+        })
+        .fail(function(data) {
+            setToast(data.code,'changeUseStatus')
+        });
+    }
 </script>

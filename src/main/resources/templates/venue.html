@@ -110,6 +110,9 @@
                 <div id="showRemark"></div>
             </div>
         </div>
+        <div class="layui-inline" id="addPic">
+
+        </div>
         <div class="layui-inline" id="optionBtnBox" style="width: 90%;">
 
         </div>
@@ -119,14 +122,15 @@
 </body>
 </html>
 <script th:inline="javascript">
-    var element,layer,form,layedit,laydate,table;
+    var element,layer,form,layedit,laydate,table,upload;
     $(function () {
-        layui.use(['element', 'form','laydate', 'table', 'layer'], function () {
+        layui.use(['element', 'form','laydate', 'table', 'layer','upload'], function () {
             element = layui.element;
             form = layui.form;
             table = layui.table;
             layer = layui.layer;
             laydate = layui.laydate;
+            upload = layui.upload;
             element.init();
             form.render();
 
@@ -250,8 +254,35 @@
                 });
                 $("#optionBtnBox ").html('<center><button class="layui-btn" id="add" onclick="add('+index+')">添加</button></center>')
                 form.render()
-            })
+            });
+
+            //选完文件后不自动上传
+            upload.render({
+                elem: '#test8'
+                ,url: '/gymBooking/resourceApi/uploadFile' //改成您自己的上传接口
+                ,auto: false
+                ,data: {
+                    refId:1,
+                    table:'t_test',
+                    fileCode:'test',
+                    type:'run'
+                }
+                //,multiple: true
+                ,bindAction: '#test9',
+                before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                    $("#test9").hide()
+                }
+                ,done: function(res){
+                    layer.msg('上传成功',function () {
+                        history.go(0)
+                    });
+                    console.log(res)
+                }
+            });
+
         });
+
+
     });
     /**点击表格中的删除按钮*/
     function deleteOne(url,id) {
